@@ -57,7 +57,14 @@ public class JSON {
                     for(int j = 0 ; j < list.size(); j+=1)
                     {
                         Object listValue = list.get(j);
-                        array.put(toJSONObject(listValue));
+                        if(isDefaultType(listValue))
+                        {
+                            array.put(listValue);
+                        }
+                        else
+                        {
+                            array.put(toJSONObject(listValue));
+                        }
                     }
                     root.put(name, array);
                 }
@@ -374,3 +381,4 @@ public class JSON {
 
 
 }
+
