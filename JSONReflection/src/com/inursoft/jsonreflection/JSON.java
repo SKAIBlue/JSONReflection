@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Anonymous on 2017. 1. 21..
+ * Created by jwmtp on 2017-02-27.
  */
 public class JSON {
 
@@ -149,33 +149,44 @@ public class JSON {
             String name = field.getName();
             try {
                 Object value = json.get(name);
-                String typeName = field.getType().getSimpleName();
-                if(isInteger(typeName))
+                Type type = field.getType();
+                if(isInteger(type))
                 {
                     field.set(o, value);
                 }
-                else if(isDouble(typeName))
+                else if(isDouble(type))
                 {
                     field.set(o, Double.valueOf(value.toString()));
                 }
-                else if(isLong(typeName))
+                else if(isLong(type))
                 {
                     field.set(o, Long.valueOf(value.toString()));
                 }
-                else if(isBoolean(typeName) || isString(typeName))
+                else if(isBoolean(type) || isString(type))
                 {
                     field.set(o, value);
                 }
-                else if(isList(typeName))
+                else if(isList(type))
                 {
                     List list = new ArrayList();
                     JSONArray array = (JSONArray)value;
                     int length = array.length();
                     Type innerType = getGenericType(field);
-                    for(int j = 0 ; j < length ; j+=1)
+                    if(isDefaultType(innerType.getTypeName()))
                     {
-                        list.add(toObject((Class)innerType, (JSONObject)array.get(j)));
+                        for(int j = 0 ; j < length ; j+=1)
+                        {
+                            list.add(array.get(j));
+                        }
                     }
+                    else
+                    {
+                        for(int j = 0 ; j < length ; j+=1)
+                        {
+                            list.add(toObject((Class)innerType, (JSONObject)array.get(j)));
+                        }
+                    }
+
                     field.set(o, list);
                 }
                 else
@@ -249,34 +260,39 @@ public class JSON {
     }
 
 
-    private static boolean isInteger(String typeName)
+    private static boolean isInteger(Type type)
     {
-        return "Integer".equals(typeName);
+        return type.equals(Integer.class);
     }
 
-    private static boolean isDouble(String typeName)
+    private static boolean isDouble(Type type)
     {
-        return "Double".equals(typeName);
+        return type.equals(Double.class);
     }
 
-    private static boolean isString(String typeName)
+    private static boolean isString(Type type)
     {
-        return "String".equals(typeName);
+        return type.equals(String.class);
     }
 
-    private static boolean isBoolean(String typeName)
+    private static boolean isNumber(Type type)
     {
-        return "Boolean".equals(typeName);
+        return type.equals(Number.class);
     }
 
-    private static boolean isLong(String typeName)
+    private static boolean isBoolean(Type type)
     {
-        return "Long".equals(typeName);
+        return type.equals(Boolean.class);
     }
 
-    private static boolean isObject(String typeName)
+    private static boolean isLong(Type type)
     {
-        return "Object".equals(typeName);
+        return type.equals(Long.class);
+    }
+
+    private static boolean isObject(Type type)
+    {
+        return type.equals(Object.class);
     }
 
 
@@ -288,20 +304,10 @@ public class JSON {
      */
     private static boolean isDefaultType(Field field)
     {
-        return isDefaultType(field.getType().getSimpleName());
+        return isDefaultType(field.getType());
     }
 
 
-
-    /**
-     * 클래스가 기본 타입인지 검사합니다
-     * @param tClass 클래스
-     * @return 기본 타입일 경우 true
-     */
-    private static boolean isDefaultType(Class tClass)
-    {
-        return isDefaultType(tClass.getSimpleName());
-    }
 
 
     /**
@@ -320,17 +326,18 @@ public class JSON {
 
     /**
      * 클래스가 기본 타입인지 검사합니다
-     * @param typeName 클래스 이름
+     * @param type 클래스 이름
      * @return 기본 타입일 경우 true
      */
-    private static boolean isDefaultType(String typeName)
+    private static boolean isDefaultType(Type type)
     {
-        return "Integer".equals(typeName) ||
-                "Double".equals(typeName) ||
-                "String".equals(typeName) ||
-                "Boolean".equals(typeName) ||
-                "Long".equals(typeName) ||
-                "Object".equals(typeName);
+        return isNumber(type) ||
+                isInteger(type) ||
+                isDouble(type) ||
+                isString(type) ||
+                isDouble(type) ||
+                isLong(type) ||
+                isObject(type);
     }
 
 
@@ -342,7 +349,7 @@ public class JSON {
      */
     private static boolean isList(Field field)
     {
-        return isList(field.getType().getSimpleName());
+        return isList(field.getType());
     }
 
 
@@ -364,19 +371,19 @@ public class JSON {
      */
     private static boolean isList(Class tClass)
     {
-        return isList(tClass.getSimpleName());
+        return isList(tClass);
     }
 
 
 
     /**
      * 클래스가 리스트인지 검사합니다
-     * @param typeName 클래스 이름
+     * @param type 클래스 이름
      * @return 리스트일 경우 true
      */
-    private static boolean isList(String typeName)
+    private static boolean isList(Type type)
     {
-        return "List".equals(typeName) || "ArrayList".equals(typeName);
+        return type.equals(List.class) || type.equals(ArrayList.class);
     }
 
 
