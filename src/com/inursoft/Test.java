@@ -34,4 +34,17 @@ public class Test {
         this.list = new ArrayList<>();
         this.inner = inner;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("i: " + i);
+        builder.append("d: " + i);
+        builder.append("s: " + i);
+        builder.append("l: " + i);
+        builder.append("b: " + i);
+        builder.append("List\n " + list.toString());
+        builder.append("inner: " + inner.toString());
+        return builder.toString();
+    }
 }

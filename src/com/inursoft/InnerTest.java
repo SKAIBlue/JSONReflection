@@ -26,4 +26,15 @@ public class InnerTest {
         this.l = l;
         this.b = b;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("i: " + i);
+        builder.append("d: " + i);
+        builder.append("s: " + i);
+        builder.append("l: " + i);
+        builder.append("b: " + i);
+        return builder.toString();
+    }
 }

@@ -11,27 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by jwmtp on 2017-02-27.
+ * Created by SKAIBlue(Jong-Woo Park) on 2017-02-27.
+ *
  */
 public class JSON {
 
     private JSON() { }
 
 
-    public static JSONArray toJSONArray(List list)
-    {
-        JSONArray array = new JSONArray();
-        for(int i = 0 ; i < list.size(); ++i)
-        {
-            array.put(toJSONObject(list.get(i)));
-        }
-        return array;
-    }
-
     /**
-     * 오브젝트를 JSON으로 변환합니다.
-     * @param o
-     * @return
+     * Object to json
+     * @param o object
+     * @return converted JSONObject
      */
     public static JSONObject toJSONObject(Object o)
     {
@@ -53,19 +44,7 @@ public class JSON {
                 else if(isList(field))
                 {
                     List list = (List)val;
-                    JSONArray array = new JSONArray();
-                    for(int j = 0 ; j < list.size(); j+=1)
-                    {
-                        Object listValue = list.get(j);
-                        if(isDefaultType(listValue))
-                        {
-                            array.put(listValue);
-                        }
-                        else
-                        {
-                            array.put(toJSONObject(listValue));
-                        }
-                    }
+                    JSONArray array = toJSONArray(list);
                     root.put(name, array);
                 }
                 else
@@ -82,8 +61,36 @@ public class JSON {
     }
 
 
+    /**
+     * List to JSONArray
+     * @param list list
+     * @return converted JSONList
+     */
+    public static JSONArray toJSONArray(List list)
+    {
+        JSONArray array = new JSONArray();
+        for(int i = 0 ; i < list.size() ; i+=1) {
+
+            Object listValue = list.get(i);
+
+            if (isDefaultType(listValue))
+            {
+                array.put(listValue);
+            } else {
+                array.put(toJSONObject(listValue));
+            }
+
+        }
+        return array;
+    }
 
 
+    /**
+     * JSON Array to List
+     * @param t type of list
+     * @param json json string
+     * @return List
+     */
     public static List toList(Class t, String json)
     {
         try {
@@ -96,26 +103,41 @@ public class JSON {
 
 
 
-    public static List toList(Class t, JSONArray array)
+    private static List toList(Class t, JSONArray array)
     {
         List list = new ArrayList();
         int length = array.length();
         try
         {
-            for(int i = 0 ; i < length; i+=1)
+            if(isDefaultType(t))
             {
-                list.add(toObject(t, array.getJSONObject(i)));
+                for(int j = 0 ; j < length ; j+=1)
+                {
+                    list.add(array.get(j));
+                }
+            }
+            else
+            {
+                for(int j = 0 ; j < length ; j+=1)
+                {
+                    list.add(toObject(t, (JSONObject)array.get(j)));
+                }
             }
         }
         catch (JSONException e)
         {
-            System.out.println("JSONList 에서 배열 범위를 벗어났습니다.");
+            System.out.println("JSONList 에서 배열 범위를 벗어났습니다.\n JSONList out of range");
         }
         return list;
     }
 
 
-
+    /**
+     * JSONObject to Object
+     * @param t type of object
+     * @param json json string
+     * @return Object
+     */
     public static Object toObject(Class t, String json)
     {
         try {
@@ -128,13 +150,13 @@ public class JSON {
 
 
 
-    public static Object toObject(Class t, JSONObject json)
+    private static Object toObject(Class t, JSONObject json)
     {
         Object o = null;
         try {
             o = t.newInstance();
         } catch (InstantiationException e) {
-            System.out.println("인스턴스를 생성할 수 없습니다. 기본 생성자가 필요합니다.");
+            System.out.println("인스턴스를 생성할 수 없습니다. 기본 생성자가 필요합니다.\n Cannot create instance. need default initializer");
             return null;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -168,25 +190,8 @@ public class JSON {
                 }
                 else if(isList(type))
                 {
-                    List list = new ArrayList();
-                    JSONArray array = (JSONArray)value;
-                    int length = array.length();
                     Type innerType = getGenericType(field);
-                    if(isDefaultType(innerType.getTypeName()))
-                    {
-                        for(int j = 0 ; j < length ; j+=1)
-                        {
-                            list.add(array.get(j));
-                        }
-                    }
-                    else
-                    {
-                        for(int j = 0 ; j < length ; j+=1)
-                        {
-                            list.add(toObject((Class)innerType, (JSONObject)array.get(j)));
-                        }
-                    }
-
+                    List list = toList((Class)innerType, (JSONArray)value);
                     field.set(o, list);
                 }
                 else
@@ -333,6 +338,7 @@ public class JSON {
     {
         return isNumber(type) ||
                 isInteger(type) ||
+                isBoolean(type) ||
                 isDouble(type) ||
                 isString(type) ||
                 isDouble(type) ||
@@ -361,17 +367,6 @@ public class JSON {
     private static boolean isList(Object obj)
     {
         return isList(obj.getClass());
-    }
-
-
-    /**
-     * 클래스가 리스트인지 검사합니다
-     * @param tClass 클래스
-     * @return 리스트일 경우 true
-     */
-    private static boolean isList(Class tClass)
-    {
-        return isList(tClass);
     }
 
 
