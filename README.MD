@@ -1,5 +1,5 @@
 # JSONReflection for java
-## Create by SKAIBlue
+## Created by SKAIBlue
 
 ### Before using. 사용하기 전에
 This library need java-json library.<br>
