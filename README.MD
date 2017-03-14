@@ -14,37 +14,40 @@ You can download this library from [here](https://github.com/SKAIBlue/JSONReflec
 ### Usage 사용법
 First, You have to import package.<br><br>
 먼저, 패키지를 임포트 해야합니다.
-<pre>
+```JAVA
 import com.inursoft.jsonreflection;
-</pre>
+```
 
 This library provide just four methods.<br><br>
 이 라이브러리는 단 4개의 메소드를 제공합니다.
 
-<pre>
+```JAVA
 public static JSONObject JSON.toJSONObject(Object o);
-</pre>
+```
 This method convert object to JSONObject<br>
 이 메소드는 오브젝트를 JSONObject 로 변환합니다.
-<pre>
+```JAVA
 public static JSONArray JSON.toJSONArray(List list);
-</pre>
+```
+
 This method convert List to JSONArray<br>
 이 메소드는 오브젝트를 JSONArray 로 변환합니다.
-<pre>
+```JAVA
 public static Object JSON.toObject(Class t, String json);
-</pre>
+```
+
+
 This method convert JSON string to Object of Class t<br>
 이 메소드는 JSON 형식의 문자열을 Class t 타입의 오브젝트로 변환합니다.
-<pre>
+```JAVA
 public static List JSON.toList(Class t, String json);
-</pre>
+```
 This method convert JSON string to List of Class t<br>
 이 메소드는 JSONArray 형식의 문자열을 Class t 타입을 가지는 리스트로 변환합니다.
 
 ### Example 예제
 #### Test
-<pre>
+```JAVA
 public class Test {
     // int
     public Integer i;
@@ -74,9 +77,9 @@ public class Test {
         this.inner = inner;
     }
 }
-</pre>
+```
 #### InnerTest
-<pre>
+```JAVA
 public class InnerTest {
 
     public Integer i;
@@ -101,11 +104,10 @@ public class InnerTest {
         this.b = b;
     }
 }
-
-</pre>
+```
 
 #### Main
-<pre>
+```JAVA
 import com.inursoft.jsonreflection.JSON;
 
 public class Main {
@@ -122,7 +124,7 @@ public class Main {
     }
 
 }
-</pre>
+```
 #### Result
 <pre>
 {"b":false,"s":"s","d":1,"i":1,"l":1,"list":[{"b":false,"s":"s","d":1,"i":1,"l":1},{"b":false,"s":"s","d":1,"i":1,"l":1},{"b":false,"s":"s","d":1,"i":1,"l":1}],"inner":{"b":false,"s":"s","d":1,"i":1,"l":1}}
